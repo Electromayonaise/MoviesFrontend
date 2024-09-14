@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../Api';
+import api from '../Api'; // Make sure this is correctly set up for your API calls
 import { Button, TextField, Container, Typography, Box, Paper, Snackbar, Alert } from '@mui/material';
 
 const Reservation = () => {
@@ -11,12 +11,22 @@ const Reservation = () => {
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     useEffect(() => {
-        api.get('/reservations/admin')  // Assuming this endpoint returns all reservations for admin
+        // Fetch all reservations for admin
+        api.get('/reservations/admin')
             .then(response => setReservations(response.data))
-            .catch(error => console.error('Error fetching reservations:', error));
+            .catch(error => {
+                console.error('Error fetching reservations:', error);
+                setSnackbar({ open: true, message: 'Error fetching reservations.', severity: 'error' });
+            });
     }, []);
 
     const handleCreateReservation = () => {
+        // Ensure all fields are filled
+        if (!customerId || !showtimeId || !seatCount) {
+            setSnackbar({ open: true, message: 'Please fill in all fields.', severity: 'warning' });
+            return;
+        }
+
         api.post('/reservations/admin', { customerId, showtimeId, seatCount })
             .then(response => {
                 setReservations([...reservations, response.data]);
@@ -32,6 +42,11 @@ const Reservation = () => {
     };
 
     const handleDeleteReservation = () => {
+        if (!reservationId) {
+            setSnackbar({ open: true, message: 'Please enter a Reservation ID.', severity: 'warning' });
+            return;
+        }
+
         api.delete(`/reservations/admin/${reservationId}`)
             .then(() => {
                 setReservations(reservations.filter(reservation => reservation.id !== parseInt(reservationId)));
