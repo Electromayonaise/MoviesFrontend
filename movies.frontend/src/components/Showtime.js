@@ -18,18 +18,30 @@ const Showtime = () => {
     }, []);
 
     const handleCreateShowtime = () => {
-        api.post('/showtimes', { movieId, theaterId, showDate, startTime })
+        // Send the data in the format expected by the ShowtimeDto
+        const showtimeData = {
+            movieId: movieId, // Directly use movieId
+            theaterId: theaterId, // Directly use theaterId
+            showDate: showDate,
+            startTime: startTime
+        };
+    
+        console.log(showtimeData);
+        api.post('/showtimes', showtimeData)
             .then(response => {
                 setShowtimes([...showtimes, response.data]);
-                setMovieId('');
+                setMovieId(''); // Clear form fields
                 setTheaterId('');
                 setShowDate('');
                 setStartTime('');
                 setSnackbar({ open: true, message: 'Showtime created successfully!', severity: 'success' });
             })
-            .catch(error => console.error('Error creating showtime:', error));
-            setSnackbar({ open: true, message: 'Error creating showtime.', severity: 'error' });
+            .catch(error => {
+                console.error('Error creating showtime:', error);
+                setSnackbar({ open: true, message: 'Error creating showtime.', severity: 'error' });
+            });
     };
+    
 
     const handleDeleteShowtime = () => {
         api.delete(`/showtimes/${showtimeId}`)

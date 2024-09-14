@@ -3,12 +3,15 @@ import api from '../Api';
 import { TextField, Button, Container, Typography, Snackbar, Alert } from '@mui/material';
 
 const Register = () => {
-    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     const handleRegister = () => {
-        api.post('/register', { username, password })
+        api.post('/customers', { firstName, lastName, email, phone, password })  // Updated endpoint
             .then(response => {
                 setSnackbar({ open: true, message: 'Registration successful!', severity: 'success' });
             })
@@ -26,10 +29,31 @@ const Register = () => {
         <Container>
             <Typography variant="h4" gutterBottom>Register</Typography>
             <TextField
-                label="Username"
+                label="First Name"
                 fullWidth
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                margin="normal"
+            />
+            <TextField
+                label="Last Name"
+                fullWidth
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                margin="normal"
+            />
+            <TextField
+                label="Email"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                margin="normal"
+            />
+            <TextField
+                label="Phone"
+                fullWidth
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 margin="normal"
             />
             <TextField
@@ -53,3 +77,4 @@ const Register = () => {
 };
 
 export default Register;
+

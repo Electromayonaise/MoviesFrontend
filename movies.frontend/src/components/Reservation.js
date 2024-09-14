@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../Api';
-import { Button, TextField, Container, Typography, Box, Paper } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, Paper, Snackbar, Alert } from '@mui/material';
 
 const Reservation = () => {
     const [reservations, setReservations] = useState([]);
@@ -11,13 +11,13 @@ const Reservation = () => {
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     useEffect(() => {
-        api.get('/reservations')
+        api.get('/reservations/admin')  // Assuming this endpoint returns all reservations for admin
             .then(response => setReservations(response.data))
             .catch(error => console.error('Error fetching reservations:', error));
     }, []);
 
     const handleCreateReservation = () => {
-        api.post('/reservations', { customerId, showtimeId, seatCount })
+        api.post('/reservations/admin', { customerId, showtimeId, seatCount })
             .then(response => {
                 setReservations([...reservations, response.data]);
                 setCustomerId('');
@@ -25,24 +25,32 @@ const Reservation = () => {
                 setSeatCount('');
                 setSnackbar({ open: true, message: 'Reservation created successfully!', severity: 'success' });
             })
-            .catch(error => console.error('Error creating reservation:', error));
-            setSnackbar({ open: true, message: 'Error creating reservation.', severity: 'error' });
+            .catch(error => {
+                console.error('Error creating reservation:', error);
+                setSnackbar({ open: true, message: 'Error creating reservation.', severity: 'error' });
+            });
     };
 
     const handleDeleteReservation = () => {
-        api.delete(`/reservations/${reservationId}`)
+        api.delete(`/reservations/admin/${reservationId}`)
             .then(() => {
                 setReservations(reservations.filter(reservation => reservation.id !== parseInt(reservationId)));
                 setReservationId('');
                 setSnackbar({ open: true, message: 'Reservation deleted successfully!', severity: 'success' });
             })
-            .catch(error => console.error('Error deleting reservation:', error));
-            setSnackbar({ open: true, message: 'Error deleting reservation.', severity: 'error' });
+            .catch(error => {
+                console.error('Error deleting reservation:', error);
+                setSnackbar({ open: true, message: 'Error deleting reservation.', severity: 'error' });
+            });
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     return (
         <Container>
-            <Typography variant="h4" gutterBottom>Reservations</Typography>
+            <Typography variant="h4" gutterBottom>Reservations (Admin)</Typography>
             <Box component={Paper} elevation={3} p={3} mb={3}>
                 <Typography variant="h6" mb={2}>Create Reservation</Typography>
                 <Box mb={2}>
@@ -91,9 +99,13 @@ const Reservation = () => {
                     Delete Reservation
                 </Button>
             </Box>
+            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
 
 export default Reservation;
-
