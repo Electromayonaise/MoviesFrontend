@@ -9,6 +9,7 @@ const Showtime = () => {
     const [showDate, setShowDate] = useState('');
     const [startTime, setStartTime] = useState('');
     const [showtimeId, setShowtimeId] = useState('');
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     useEffect(() => {
         api.get('/showtimes')
@@ -24,8 +25,10 @@ const Showtime = () => {
                 setTheaterId('');
                 setShowDate('');
                 setStartTime('');
+                setSnackbar({ open: true, message: 'Showtime created successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error creating showtime:', error));
+            setSnackbar({ open: true, message: 'Error creating showtime.', severity: 'error' });
     };
 
     const handleDeleteShowtime = () => {
@@ -33,8 +36,10 @@ const Showtime = () => {
             .then(() => {
                 setShowtimes(showtimes.filter(showtime => showtime.id !== parseInt(showtimeId)));
                 setShowtimeId('');
+                setSnackbar({ open: true, message: 'Showtime deleted successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error deleting showtime:', error));
+            setSnackbar({ open: true, message: 'Error deleting showtime.', severity: 'error' });
     };
 
     return (

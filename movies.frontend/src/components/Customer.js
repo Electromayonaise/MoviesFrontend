@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../Api';
-import { Button, TextField, Container, Typography, Box, Paper } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, Paper, Snackbar, Alert } from '@mui/material';
 
 const Customer = () => {
     const [customers, setCustomers] = useState([]);
@@ -9,6 +9,7 @@ const Customer = () => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [customerId, setCustomerId] = useState('');
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     useEffect(() => {
         api.get('/customers')
@@ -24,8 +25,12 @@ const Customer = () => {
                 setLastName('');
                 setEmail('');
                 setPhone('');
+                setSnackbar({ open: true, message: 'Customer created successfully!', severity: 'success' });
             })
-            .catch(error => console.error('Error creating customer:', error));
+            .catch(error => {
+                console.error('Error creating customer:', error);
+                setSnackbar({ open: true, message: 'Error creating customer.', severity: 'error' });
+            });
     };
 
     const handleDeleteCustomer = () => {
@@ -33,8 +38,16 @@ const Customer = () => {
             .then(() => {
                 setCustomers(customers.filter(customer => customer.id !== parseInt(customerId)));
                 setCustomerId('');
+                setSnackbar({ open: true, message: 'Customer deleted successfully!', severity: 'success' });
             })
-            .catch(error => console.error('Error deleting customer:', error));
+            .catch(error => {
+                console.error('Error deleting customer:', error);
+                setSnackbar({ open: true, message: 'Error deleting customer.', severity: 'error' });
+            });
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbar({ ...snackbar, open: false });
     };
 
     return (
@@ -93,6 +106,11 @@ const Customer = () => {
                     Delete Customer
                 </Button>
             </Box>
+            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

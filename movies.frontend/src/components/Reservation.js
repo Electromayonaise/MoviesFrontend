@@ -8,6 +8,7 @@ const Reservation = () => {
     const [showtimeId, setShowtimeId] = useState('');
     const [seatCount, setSeatCount] = useState('');
     const [reservationId, setReservationId] = useState('');
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     useEffect(() => {
         api.get('/reservations')
@@ -22,8 +23,10 @@ const Reservation = () => {
                 setCustomerId('');
                 setShowtimeId('');
                 setSeatCount('');
+                setSnackbar({ open: true, message: 'Reservation created successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error creating reservation:', error));
+            setSnackbar({ open: true, message: 'Error creating reservation.', severity: 'error' });
     };
 
     const handleDeleteReservation = () => {
@@ -31,8 +34,10 @@ const Reservation = () => {
             .then(() => {
                 setReservations(reservations.filter(reservation => reservation.id !== parseInt(reservationId)));
                 setReservationId('');
+                setSnackbar({ open: true, message: 'Reservation deleted successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error deleting reservation:', error));
+            setSnackbar({ open: true, message: 'Error deleting reservation.', severity: 'error' });
     };
 
     return (

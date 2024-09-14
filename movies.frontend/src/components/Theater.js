@@ -9,6 +9,7 @@ const Theater = () => {
     const [theaterNumber, setTheaterNumber] = useState('');
     const [capacity, setCapacity] = useState('');
     const [theaterId, setTheaterId] = useState('');
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     useEffect(() => {
         api.get(API_URL)
@@ -22,8 +23,10 @@ const Theater = () => {
                 setTheaters([...theaters, response.data]);
                 setTheaterNumber('');
                 setCapacity('');
+                setSnackbar({ open: true, message: 'Theater created successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error creating theater:', error));
+            setSnackbar({ open: true, message: 'Error creating theater.', severity: 'error' });
     };
 
     const handleDeleteTheater = () => {
@@ -31,8 +34,10 @@ const Theater = () => {
             .then(() => {
                 setTheaters(theaters.filter(theater => theater.id !== parseInt(theaterId)));
                 setTheaterId('');
+                setSnackbar({ open: true, message: 'Theater deleted successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error deleting theater:', error));
+            setSnackbar({ open: true, message: 'Error deleting theater.', severity: 'error' });
     };
 
     return (

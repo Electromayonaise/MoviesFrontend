@@ -9,6 +9,7 @@ const Movie = () => {
     const [duration, setDuration] = useState('');
     const [releaseDate, setReleaseDate] = useState('');
     const [movieId, setMovieId] = useState('');
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
     useEffect(() => {
         api.get('/movies')
@@ -24,8 +25,11 @@ const Movie = () => {
                 setDirector('');
                 setDuration('');
                 setReleaseDate('');
+                setSnackbar({ open: true, message: 'Movie created successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error creating movie:', error));
+            setSnackbar({ open: true, message: 'Error creating movie.', severity: 'error' });
+
     };
 
     const handleDeleteMovie = () => {
@@ -33,8 +37,10 @@ const Movie = () => {
             .then(() => {
                 setMovies(movies.filter(movie => movie.id !== parseInt(movieId)));
                 setMovieId('');
+                setSnackbar({ open: true, message: 'Movie deleated successfully!', severity: 'success' });
             })
             .catch(error => console.error('Error deleting movie:', error));
+            setSnackbar({ open: true, message: 'Error deleting movie.', severity: 'error' });
     };
 
     return (
