@@ -52,7 +52,7 @@ function App() {
                             <>
                                 <Route path="/movies" element={<MoviesList />} />
                                 <Route path="/movies/:id" element={<MovieDetails />} />
-                                <Route path="/reservations" element={<UserReservation />} />
+                                <Route path="/user-reservations" element={<UserReservation />} />
                                 <Route path="*" element={<Navigate to="/movies" />} />
                             </>
                         )}

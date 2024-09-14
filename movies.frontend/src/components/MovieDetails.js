@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Typography, Button, Card, CardContent, CardMedia, List, ListItem, ListItemText, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import api from '../Api';
 import { useParams } from 'react-router-dom';
+import qs from 'qs';
 
 const MovieDetails = () => {
     const { id } = useParams();
@@ -47,29 +48,29 @@ const MovieDetails = () => {
             alert('User not authenticated.');
             return;
         }
-
+        console.log('Reserving', seatCount, 'seats for showtime', selectedShowtime, 'for customer', customerId);
         if (selectedShowtime) {
-            api.post('/reservations/user', null, {
-                params: {
-                    showtimeId: selectedShowtime,
-                    seatCount: seatCount
-                },
+            // Usando qs.stringify para formatear los datos
+            api.post('/reservations/user', qs.stringify({
+                showtimeId: selectedShowtime,
+                seatCount: seatCount,
+            }), {
                 headers: {
-                    'Customer-Id': customerId
+                    'CustomerId': customerId,  // Se sigue enviando el encabezado personalizado
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 }
             })
             .then(response => {
                 console.log('Reservation successful:', response.data);
-                // Handle success, e.g., navigate to a confirmation page
                 handleCloseSeatDialog();
             })
             .catch(error => {
                 console.error('Error making reservation:', error);
-                // Handle error, e.g., show an error message
             });
         } else {
             alert('Please select a showtime.');
         }
+    
     };
 
     return (
@@ -80,7 +81,7 @@ const MovieDetails = () => {
                     component="img"
                     alt={movie.title}
                     height="140"
-                    image={movie.imageUrl} // Adjust as needed
+                    image={movie.imageUrl ? movie.imageUrl : '/banner.jpeg'} 
                 />
                 <CardContent>
                     <Typography variant="h6">{movie.title}</Typography>

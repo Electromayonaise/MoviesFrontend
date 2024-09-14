@@ -17,6 +17,10 @@ const MoviesList = () => {
         navigate(`/movies/${movieId}`);
     };
 
+    const handleViewReservations = () => {
+        navigate('/user-reservations');
+    };
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom>Movies</Typography>
@@ -27,7 +31,7 @@ const MoviesList = () => {
                             component="img"
                             alt={movie.title}
                             height="140"
-                            image={movie.imageUrl} // Adjust as needed
+                            image={movie.imageUrl ? movie.imageUrl : '/test.jpeg'} 
                         />
                         <CardContent>
                             <Typography variant="h6">{movie.title}</Typography>
@@ -36,9 +40,13 @@ const MoviesList = () => {
                     </Card>
                 ))}
             </div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                <Button variant="contained" color="primary" onClick={handleViewReservations}>
+                    View Reservations
+                </Button>
+            </div>
         </Container>
     );
 };
 
 export default MoviesList;
-
